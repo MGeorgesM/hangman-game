@@ -34,4 +34,8 @@ const rightLeg = () => {
   const rightLeg = `<img src="./assets/right-leg.svg" alt="right-leg" class="right-leg" />`;
 
   hang.innerHTML += rightLeg;
+  
+  populateWord(challengeWord);
 };
+
+const drawings = [head, body, leftHand, rightHand, leftLeg, rightLeg];

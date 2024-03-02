@@ -1,41 +1,56 @@
-const letterButtons = document.querySelectorAll('.letter')
-const answerSection = document.getElementById('answer-section')
+const letterButtons = document.querySelectorAll('.letter');
+const answerSection = document.getElementById('answer-section');
 const words = ['apple', 'banana', 'cat', 'dog', 'elephant', 'frog', 'giraffe', 'horse', 'iguana', 'jaguar'];
 const challengeWordIndex = Math.floor(Math.random() * words.length);
-console.log(words.length)
-console.log(challengeWordIndex)
-const challengeWord = words[challengeWordIndex]
-console.log(challengeWord)
+const challengeWord = words[challengeWordIndex];
 
+let mistakesCount = 0;
+
+function checkLetter(keyChoice) {
+    let letterFound = 0;
+    for (let i = 0; i < challengeWord.length; i++) {
+        if (challengeWord[i] === keyChoice) {
+            answerSection.children[i].textContent = keyChoice;
+            letterFound ++;
+        }
+    }
+    if (letterFound === 0) {
+        drawings[mistakesCount]?.();
+        mistakesCount ++;
+    }
+}
+
+function populateDashes(challengeWord) {
+    for (let i = 0; i < challengeWord.length; i++) {
+        const dash = `<span>_</span>`;
+        answerSection.innerHTML += dash;
+    }
+}
+
+function populateWord(challengeWord) {
+    answerSection.innerHTML = `<span>${challengeWord}</span>`;
+    setTimeout(function() {
+        location.reload();
+      }, 3000);
+}
+
+populateDashes(challengeWord);
 
 for (let i = 0; i < letterButtons.length; i++) {
     letterButtons[i].addEventListener('click', function () {
-        console.log('Listening to button clicks')
-        console.log(letterButtons[i].textContent)
-        checkLetter(letterButtons[i].textContent)
+        if (!letterButtons[i].classList.contains('pressed')) {
+            letterButtons[i].classList.add('pressed');
+            checkLetter(letterButtons[i].textContent.toLowerCase());
+        }
     })
 }
 
-for (let i = 0; i < challengeWord.length; i++) {
-    const dash = `<div class="letter">_</div>`;
-    answerSection.innerHTML += dash
-}
-
-document.addEventListener('keyup', function (event) {
-    console.log('Keypress listeneer')
-    console.log(event.key)
-    checkLetter(event.key)
+document.addEventListener('keypress', function (event) {
+    for (let i = 0; i < letterButtons.length; i++) {
+        if (!letterButtons[i].classList.contains('pressed') && 
+            letterButtons[i].textContent === event.key.toUpperCase()) {
+            letterButtons[i].classList.add('pressed');
+            checkLetter(event.key);
+        }
+    }
 })
-
-
-function checkLetter (keyChoice) {
-    if (keyChoice.length != 1) {
-        return
-    }
-    if (challengeWord.includes(keyChoice.toLowerCase())) {
-        console.log('Char is found', keyChoice);
-        
-        return
-    }
-    console.log('Char not found', keyChoice)
-}
