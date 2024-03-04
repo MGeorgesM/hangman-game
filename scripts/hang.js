@@ -36,6 +36,10 @@ const rightLeg = () => {
   hang.innerHTML += rightLeg;
   
   populateWord(challengeWord);
+
+  setTimeout(() => {
+    resetGame();
+  }, 3000);
 };
 
 const drawings = [head, body, leftHand, rightHand, leftLeg, rightLeg];

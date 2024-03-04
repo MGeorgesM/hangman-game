@@ -1,22 +1,34 @@
 const letterButtons = document.querySelectorAll('.letter');
 const answerSection = document.getElementById('answer-section');
 const words = ['apple', 'banana', 'cat', 'dog', 'elephant', 'frog', 'giraffe', 'horse', 'iguana', 'jaguar'];
-const challengeWordIndex = Math.floor(Math.random() * words.length);
-const challengeWord = words[challengeWordIndex];
 
+let challengeWord = '';
+let guessWord = '';
 let mistakesCount = 0;
+
+function generateChallengeWord() {
+    const challengeWordIndex = Math.floor(Math.random() * words.length);
+    challengeWord = words[challengeWordIndex];
+    console.log(challengeWord)
+}
 
 function checkLetter(keyChoice) {
     let letterFound = 0;
     for (let i = 0; i < challengeWord.length; i++) {
         if (challengeWord[i] === keyChoice) {
             answerSection.children[i].textContent = keyChoice;
-            letterFound ++;
+            guessWord += keyChoice
+            letterFound++;
         }
     }
     if (letterFound === 0) {
         drawings[mistakesCount]?.();
-        mistakesCount ++;
+        mistakesCount++;
+    }
+    else if (guessWord.length === challengeWord.length) {
+        setTimeout(() => {
+            resetGame();
+        }, 3000);
     }
 }
 
@@ -29,12 +41,33 @@ function populateDashes(challengeWord) {
 
 function populateWord(challengeWord) {
     answerSection.innerHTML = `<span>${challengeWord}</span>`;
-    setTimeout(function() {
-        location.reload();
-      }, 3000);
 }
 
-populateDashes(challengeWord);
+function resetGame() {
+    for (let i = 0; i < letterButtons.length; i++) {
+        letterButtons[i].classList.remove('pressed')
+    }
+    mistakesCount = 0;
+    hang.innerHTML = `<img src="./assets/hang.svg" class="stand" />`;
+    answerSection.innerHTML = "";
+    generateChallengeWord();
+    populateDashes(challengeWord);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    generateChallengeWord();
+    populateDashes(challengeWord);
+});
+
+document.addEventListener('keypress', function (event) {
+    for (let i = 0; i < letterButtons.length; i++) {
+        if (!letterButtons[i].classList.contains('pressed') &&
+            letterButtons[i].textContent === event.key.toUpperCase()) {
+            letterButtons[i].classList.add('pressed');
+            checkLetter(event.key);
+        }
+    }
+})
 
 for (let i = 0; i < letterButtons.length; i++) {
     letterButtons[i].addEventListener('click', function () {
@@ -45,12 +78,3 @@ for (let i = 0; i < letterButtons.length; i++) {
     })
 }
 
-document.addEventListener('keypress', function (event) {
-    for (let i = 0; i < letterButtons.length; i++) {
-        if (!letterButtons[i].classList.contains('pressed') && 
-            letterButtons[i].textContent === event.key.toUpperCase()) {
-            letterButtons[i].classList.add('pressed');
-            checkLetter(event.key);
-        }
-    }
-})
